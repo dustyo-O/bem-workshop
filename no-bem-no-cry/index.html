@@ -1,0 +1,239 @@
+<html>
+<head>
+    <title>Шаблонизация</title>
+    <meta charset="utf-8">
+    <style>
+    *
+    {
+        margin: 0;
+        padding: 0;
+    }
+
+    html
+    {
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    header
+    {
+        display: table;
+
+        width: 100%;
+        height: 30px;
+
+        border-bottom: 1px solid #eaeaea;
+    }
+
+    header > *
+    {
+        display: table-cell;
+
+        vertical-align: middle;
+    }
+
+    header > form
+    {
+        padding-right: 20px;
+
+        text-align: right;
+    }
+
+    input
+    {
+        font-family: 'Open Sans', sans-serif;
+
+        padding: 5px 10px;
+
+        border: 1px solid #ef5;
+    }
+
+    input:focus
+    {
+        outline: none;
+    }
+
+    button
+    {
+        font-family: 'Open Sans', sans-serif;
+        font-weight: 700;
+
+        padding: 6px 10px;
+
+        border: none;
+        border-radius: 4px;
+        background: #ef5;
+    }
+
+    .container
+    {
+        font: 0/0 a;
+    }
+
+    .photo
+    {
+        font-family: 'Open Sans', sans-serif;
+        font-size: initial;
+
+        position: relative;
+
+        display: inline-block;
+
+        box-sizing: border-box;
+        width: calc(33% - 20px);
+        min-width: 340px;
+        max-width: 400px;
+        height: 215px;
+        margin: 10px;
+        padding: 30px 20px 20px;
+
+        border: 1px solid #fff;
+        border-radius: 3px;
+        background-repeat: no-repeat;
+        box-shadow: 0 1px 1px rgba(0, 0, 0, .1);
+    }
+
+    .photo footer
+    {
+        line-height: 50px;
+
+        position: absolute;
+        bottom: 0;
+        left: 0;
+
+        box-sizing: border-box;
+        width: 100%;
+        height: 70px;
+        padding: 10px;
+
+        color: #fff;
+    }
+
+    .photo footer > *
+    {
+        float: left;
+    }
+
+    .photo footer h2
+    {
+        overflow: hidden;
+
+        max-width: 240px;
+
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    .photo footer > * + *
+    {
+        margin-left: 5px;
+    }
+
+    .avatar
+    {
+        overflow: hidden;
+
+        border-radius: 50%;
+    }
+
+    .avatar > img
+    {
+        width: 50px;
+    }
+
+    .social
+    {
+        color: inherit;
+    }
+
+    .photo footer > .rating
+    {
+        float: right;
+    }
+
+    .rating > .icon-heart,
+    .photo footer .icon-instagram
+    {
+        display: inline-block;
+
+        width: 16px;
+        height: 16px;
+    }
+
+    .icon-heart
+    {
+        background: url(heart.svg);
+        background-size: cover;
+    }
+
+    .icon-instagram
+    {
+        background: url(instagram.svg);
+        background-size: cover;
+    }
+
+    #show-more
+    {
+        display: block;
+
+        width: calc(100% - 100px);
+        max-width: 800px;
+        margin: auto;
+    }
+    </style>
+</head>
+<body>
+    <header>
+        <h2>Фотографии</h2>
+        <form><input name="query"><button class="search-button">Искать</button></form>
+    </header>
+    <div class="container"></div>
+    <button id="show-more">Показать еще</button>
+<script>
+    const url = new URLSearchParams(location.search);
+    let page = 1;
+
+    function showPage() {
+        url.set('page', page);
+
+        const path = url.has('query') ? '/search/photos/' : '/photos/';
+
+        fetch(`https://api.unsplash.com${path}?${url.toString()}&per_page=12&client_id=4d82f21bed2903b0eae8dcadd0fddea88b6638f9f9cda84a433b6c97f581c63b`)
+            .then(res => res.json())
+            .then(json => {
+                json = json.results || json;
+
+                document.querySelector('.container').innerHTML += json.map(photoStringTemplate).join('');
+            });
+    }
+
+    if (url.has('query')) {
+        document.querySelector('[name="query"]').value = url.get('query');
+        document.querySelector('header h2').innerText = 'Фотографии по запросу ' + url.get('query');
+    }
+
+    showPage();
+
+    document.getElementById('show-more').onclick = function() {
+        showPage(++page);
+    }
+
+    function photoStringTemplate(photo) {
+        return `
+    <article class="photo" style="background-image: url(${photo.urls.small})">
+        <footer>
+            <span class="avatar"><img src="${photo.user.profile_image.medium}"></span>
+            <h2>${photo.user.name}</h2>` +
+            (photo.user.instagram_username ? `<a class="social" href="https://www.instagram.com/${photo.user.instagram_username}">
+                <span class="icon-instagram"></span>
+            </a>` : '') +
+            `<span class="rating">
+                <span class="icon-heart"></span> ${photo.likes}
+            </span>
+        </footer>
+    </article>
+        `;
+    }
+
+</script>
+</body>
+</html>
