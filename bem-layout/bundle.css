@@ -1,5 +1,6 @@
 @import "./blocks/avatar/avatar.css";
 @import "./blocks/button/button.css";
+@import "./node_modules/bem-3d-button-example/blocks/button/button.css";
 @import "./blocks/container/container.css";
 @import "./blocks/header/header.css";
 @import "./blocks/icon/icon.css";
