@@ -1,0 +1,11 @@
+.input {
+    font-family: 'Open Sans', sans-serif;
+
+    padding: 5px 10px;
+
+    border: 1px solid #ef5;
+}
+
+.input:focus {
+    outline: none;
+}

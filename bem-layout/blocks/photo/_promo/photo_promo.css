@@ -1,0 +1,7 @@
+.photo_promo {
+    width: calc(100% - 20px);
+    max-width: 1240px;
+    height: 400px;
+
+    background-size: cover;
+}

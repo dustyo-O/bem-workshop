@@ -1,0 +1,13 @@
+@import "./blocks/avatar/avatar.css";
+@import "./blocks/button/button.css";
+@import "./blocks/container/container.css";
+@import "./blocks/header/header.css";
+@import "./blocks/icon/icon.css";
+@import "./blocks/icon/_type/icon_type_heart.css";
+@import "./blocks/icon/_type/icon_type_instagram.css";
+@import "./blocks/input/input.css";
+@import "./blocks/page/page.css";
+@import "./blocks/photo/photo.css";
+@import "./blocks/search-form/search-form.css";
+@import "./blocks/show-more/show-more.css";
+@import "./blocks/social/social.css";
