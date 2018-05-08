@@ -20,12 +20,18 @@
 
         const path = url.has('query') ? '/search/photos/' : '/photos/';
 
-        fetch(`https://api.unsplash.com${path}?${url.toString()}&per_page=12&client_id=4d82f21bed2903b0eae8dcadd0fddea88b6638f9f9cda84a433b6c97f581c63b`)
+        fetch(`https://api.unsplash.com${path}?${url.toString()}&per_page=13&client_id=4d82f21bed2903b0eae8dcadd0fddea88b6638f9f9cda84a433b6c97f581c63b`)
             .then(res => res.json())
             .then(json => {
                 json = json.results || json;
 
-                document.querySelector('.container').innerHTML += json.map(photoStringTemplate).join('');
+                document.querySelector('.container').innerHTML += json.map(function(photo, i) {
+                    if (i === 3) {
+                        photo.promo = true;
+                    }
+
+                    return photoStringTemplate(photo);
+                }).join('');
             });
     }
 
@@ -41,8 +47,10 @@
     }
 
     function photoStringTemplate(photo) {
+        const promo = photo.promo ? ' photo_promo' : '';
+        const image = photo.promo ? photo.urls.regular : photo.urls.small;
         return `
-    <article class="photo" style="background-image: url(${photo.urls.small})">
+    <article class="photo${promo}" style="background-image: url(${image})">
         <footer class="photo__footer">
             <span class="photo__footer-item avatar"><img class="avatar__image" src="${photo.user.profile_image.medium}"></span>
             <h2 class="photo__footer-item photo__footer-title">${photo.user.name}</h2>` +
