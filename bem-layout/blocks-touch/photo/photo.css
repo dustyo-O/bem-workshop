@@ -1,0 +1,7 @@
+.photo {
+    width: 100%;
+}
+
+.photo__footer-title {
+    max-width: calc(100% - 130px);
+}

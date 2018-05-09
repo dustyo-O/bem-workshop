@@ -1,0 +1,70 @@
+<html>
+<head>
+    <title>Шаблонизация</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="bundle-desktop.css">
+</head>
+<body class="page">
+    <header class="header">
+        <h2 class="header__item header__title">Фотографии</h2>
+        <form class="header__item search-form"><input class="search-form__input input" name="query"><button class="button search-button">Искать</button></form>
+    </header>
+    <div class="container"></div>
+    <button class="button show-more">Показать еще</button>
+<script>
+    const url = new URLSearchParams(location.search);
+    let page = 1;
+
+    function showPage() {
+        url.set('page', page);
+
+        const path = url.has('query') ? '/search/photos/' : '/photos/';
+
+        fetch(`https://api.unsplash.com${path}?${url.toString()}&per_page=13&client_id=4d82f21bed2903b0eae8dcadd0fddea88b6638f9f9cda84a433b6c97f581c63b`)
+            .then(res => res.json())
+            .then(json => {
+                json = json.results || json;
+
+                document.querySelector('.container').innerHTML += json.map(function(photo, i) {
+                    if (i === 3) {
+                        photo.promo = true;
+                    }
+
+                    return photoStringTemplate(photo);
+                }).join('');
+            });
+    }
+
+    if (url.has('query')) {
+        document.querySelector('.search-form__input').value = url.get('query');
+        document.querySelector('.header__title').innerText = 'Фотографии по запросу ' + url.get('query');
+    }
+
+    showPage();
+
+    document.querySelector('.show-more').onclick = function() {
+        showPage(++page);
+    }
+
+    function photoStringTemplate(photo) {
+        const promo = photo.promo ? ' photo_promo' : '';
+        const image = photo.promo ? photo.urls.regular : photo.urls.small;
+        return `
+    <article class="photo${promo}" style="background-image: url(${image})">
+        <footer class="photo__footer">
+            <span class="photo__footer-item avatar"><img class="avatar__image" src="${photo.user.profile_image.medium}"></span>
+            <h2 class="photo__footer-item photo__footer-title">${photo.user.name}</h2>` +
+            (photo.user.instagram_username ? `<a class="photo__footer-item social" href="https://www.instagram.com/${photo.user.instagram_username}">
+                <span class="icon icon_type_instagram"></span>
+            </a>` : '') +
+            `<span class="photo__rating rating">
+                <span class="icon icon_type_heart"></span> ${photo.likes}
+            </span>
+        </footer>
+    </article>
+        `;
+    }
+
+</script>
+</body>
+</html>
